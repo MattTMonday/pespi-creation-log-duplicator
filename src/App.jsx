@@ -173,10 +173,15 @@ function App() {
 
               if (creationLogColumn && creationLogColumn.value) {
                 try {
+                  // Parse the creation log JSON and extract just the date
+                  const creationLogData = JSON.parse(creationLogColumn.value);
+                  const createdAt = new Date(creationLogData.created_at);
+                  const dateOnly = createdAt.toISOString().split("T")[0]; // Extract YYYY-MM-DD format
+
                   itemsToUpdate.push({
                     itemId: subItem.id,
                     columnId: targetColumnId,
-                    value: creationLogColumn.value,
+                    value: dateOnly,
                     boardId: subItem.board.id,
                   });
                 } catch (e) {
@@ -211,12 +216,12 @@ function App() {
 
         // Build mutation for this batch
         const mutations = batch
-          .map(
-            (item, index) =>
-              `update_${batchIndex}_${index}: change_simple_column_value(item_id: ${item.itemId}, board_id: ${item.boardId}, column_id: "${item.columnId}", value: "${item.value}") {
+          .map((item, index) => {
+            // Properly escape the value for GraphQL
+            return `update_${batchIndex}_${index}: change_simple_column_value(item_id: ${item.itemId}, board_id: ${item.boardId}, column_id: "${item.columnId}", value: "${item.value}") {
             id
-          }`
-          )
+          }`;
+          })
           .join("\n\n");
 
         console.log(mutations);
