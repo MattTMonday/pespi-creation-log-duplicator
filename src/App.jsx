@@ -11,6 +11,7 @@ function App() {
   const monday = mondaySdk();
   const [subItems, setSubItems] = useState([]);
   const [subItemColumnData, setSubItemColumnData] = useState([]);
+  const [success, setSuccess] = useState(false);
 
   const getAllItems = async (boardId) => {
     try {
@@ -165,7 +166,7 @@ function App() {
 
   return (
     <>
-      <h1>Hello World</h1>
+      <h1>Creation Log Duplicator</h1>
 
       <Box sx={{ minWidth: 120, margin: 2 }}>
         <FormControl fullWidth>
@@ -187,6 +188,12 @@ function App() {
       </Box>
 
       {targetColumnId && <p>Selected column ID: {targetColumnId}</p>}
+
+      <Button variant="contained" color="primary">
+        Duplicate
+      </Button>
+
+      {success && <p>Successfully duplicated</p>}
     </>
   );
 }
